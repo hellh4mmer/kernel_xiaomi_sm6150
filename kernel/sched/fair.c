@@ -4768,6 +4768,10 @@ static int tg_throttle_down(struct task_group *tg, void *data)
 	return 0;
 }
 
+static void se_update_runnable(struct sched_entity *se);
+
+static void assert_list_leaf_cfs_rq(struct rq *rq);
+
 static void throttle_cfs_rq(struct cfs_rq *cfs_rq)
 {
 	struct rq *rq = rq_of(cfs_rq);
@@ -4794,7 +4798,7 @@ static void throttle_cfs_rq(struct cfs_rq *cfs_rq)
 		if (dequeue) {
 			dequeue_entity(qcfs_rq, se, DEQUEUE_SLEEP);
 		} else {
-			update_load_avg(qcfs_rq, se, 0);
+			update_load_avg(se, 0);
 			se_update_runnable(se);
 		}
 
@@ -4872,7 +4876,7 @@ void unthrottle_cfs_rq(struct cfs_rq *cfs_rq)
 		if (enqueue) {
 			enqueue_entity(cfs_rq, se, ENQUEUE_WAKEUP);
 		} else {
-			update_load_avg(cfs_rq, se, 0);
+			update_load_avg(se, 0);
 			se_update_runnable(se);
 		}
 
